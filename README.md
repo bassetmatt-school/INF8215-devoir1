@@ -1,2 +1,7 @@
 # INF8215-devoir1
-Devoir 1 du cours INF8215 à Poly (Algorithmes IA)
+First project for the cours INF8215 (AI Algorithms)
+
+## Environment
+User may use a Conda environmennt with python 3.8 (intended use)
+### Requierments
+No further requierments are needed
