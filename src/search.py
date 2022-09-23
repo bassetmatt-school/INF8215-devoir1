@@ -89,36 +89,37 @@ def depthFirstSearch(problem:GraphSearch):
     print("Start's successors:", problem.getSuccessors(problem.getStartState()))
     """
     from game import Directions
+    # s0
     s = problem.getStartState()
     start = s
     prev = (-1,-1)
-    V = {}
+    # States visited and fringe
+    V = set()
     L = util.Stack()
-    L.push((s,Directions.STOP))
+    # Memory of the steps
+    steps = [(prev,Directions.STOP)]
+    L.push((s, prev, Directions.STOP))
     i = 0
     print(f"[{i:2d}] : s = {s}\nV = {V}\nL = {L}\n")
-    #while True :
-    #    a=1
     while (not L.isEmpty()) :
         i += 1
-        s, dir = L.pop()
-        V[s] = (prev, dir)
-        if problem.isGoalState(s) :
-            print("WIN\n")
-            sol = []
-            while s != start:
-                prev, dir = V[s]
-                sol.append(dir)
-                print(f"V[s] = {V[s]}, dir = {dir}\nSol = {sol}")
-                s = prev
-            sol.reverse()
-            print(sol)
-            return sol
-        else :
+        s, prev, dir = L.pop()
+        if not problem.isGoalState(s) :
             C = [c for c in problem.getSuccessors(s) if c[0] not in V]
+            # c = ((4,5),'West',1)
             for c in C :
-                L.push(c[0:2])
-            prev = s
+                L.push((c[0],s,c[1]))
+            V.add(s)
+            print(f"[{i:2d}] : s = {s}\nV = {V}\nL = {L}\nsteps = {steps}\n")
+            while steps[-1][0] != prev :
+                steps.pop()
+            steps.append((s,dir))
+        else :
+            print("WIN\n")
+            print(f"[{i:2d}] : s = {s}\nV = {V}\nL = {L}\nsteps = {steps}\n")
+            return [d for _, d in steps[1:]] + [dir]
+            
+                
         print(f"[{i:2d}] : s = {s}\nV = {V}\nL = {L}\n")
     return -1
     util.raiseNotDefined()
