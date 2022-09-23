@@ -8,7 +8,7 @@ No further requierments are needed
 
 ## Project advancement
 ### Part 1
-- [ ] Question 1: DFS ?
+- [x] Question 1: DFS
 - [ ] Question 2: BFS
 - [ ] Question 3: UCS
 - [ ] Question 4: $A^*$
@@ -19,3 +19,10 @@ No further requierments are needed
 - [ ] Question 7:
 ### Others
 - [ ] Overall documentation and code review
+- [ ] Doc q1
+- [ ] Doc q2
+- [ ] Doc q3
+- [ ] Doc q4
+- [ ] Doc q5
+- [ ] Doc q6
+- [ ] Doc q7
