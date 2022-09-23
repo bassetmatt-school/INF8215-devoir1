@@ -72,7 +72,9 @@ def tinyMazeSearch(problem):
     w = Directions.WEST
     return  [s, s, w, s, w, w, s, w]
 
-def depthFirstSearch(problem):
+
+from searchTestClasses import GraphSearch
+def depthFirstSearch(problem:GraphSearch):
     """
     Search the deepest nodes in the search tree first.
 
@@ -86,11 +88,37 @@ def depthFirstSearch(problem):
     print("Is the start a goal?", problem.isGoalState(problem.getStartState()))
     print("Start's successors:", problem.getSuccessors(problem.getStartState()))
     """
-
-    '''
-        INSÉREZ VOTRE SOLUTION À LA QUESTION 1 ICI
-    '''
-
+    from game import Directions
+    # s0
+    s = problem.getStartState()
+    start = s
+    prev = (-1,-1)
+    # States visited and fringe
+    V = set()
+    L = util.Stack()
+    # Memory of the steps
+    steps = [(prev,Directions.STOP)]
+    L.push((s, prev, Directions.STOP))
+    i = 0
+    #print(f"[{i:2d}] : s = {s}\nV = {V}\nL = {L}\n")
+    while (not L.isEmpty()) :
+        i += 1
+        s, prev, dir = L.pop()
+        if not problem.isGoalState(s) :
+            C = [c for c in problem.getSuccessors(s) if c[0] not in V]
+            # c = ((4,5),'West',1)
+            for c in C :
+                L.push((c[0],s,c[1]))
+            V.add(s)
+            # Adds the current state to the steps memory at the right place
+            while steps[-1][0] != prev :
+                steps.pop()
+            steps.append((s,dir))
+        else :
+            #print("WIN\n")
+            return [d for _, d in steps[2:]] + [dir]
+        #print(f"[{i:2d}] : s = {s}\nV = {V}\nL = {L}\nsteps = {steps}\n")            
+    return -1
     util.raiseNotDefined()
 
 
