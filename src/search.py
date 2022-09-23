@@ -100,7 +100,7 @@ def depthFirstSearch(problem:GraphSearch):
     steps = [(prev,Directions.STOP)]
     L.push((s, prev, Directions.STOP))
     i = 0
-    print(f"[{i:2d}] : s = {s}\nV = {V}\nL = {L}\n")
+    #print(f"[{i:2d}] : s = {s}\nV = {V}\nL = {L}\n")
     while (not L.isEmpty()) :
         i += 1
         s, prev, dir = L.pop()
@@ -110,17 +110,14 @@ def depthFirstSearch(problem:GraphSearch):
             for c in C :
                 L.push((c[0],s,c[1]))
             V.add(s)
-            print(f"[{i:2d}] : s = {s}\nV = {V}\nL = {L}\nsteps = {steps}\n")
+            # Adds the current state to the steps memory at the right place
             while steps[-1][0] != prev :
                 steps.pop()
             steps.append((s,dir))
         else :
             print("WIN\n")
-            print(f"[{i:2d}] : s = {s}\nV = {V}\nL = {L}\nsteps = {steps}\n")
             return [d for _, d in steps[1:]] + [dir]
-            
-                
-        print(f"[{i:2d}] : s = {s}\nV = {V}\nL = {L}\n")
+        #print(f"[{i:2d}] : s = {s}\nV = {V}\nL = {L}\nsteps = {steps}\n")            
     return -1
     util.raiseNotDefined()
 
