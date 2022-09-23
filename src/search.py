@@ -115,8 +115,8 @@ def depthFirstSearch(problem:GraphSearch):
                 steps.pop()
             steps.append((s,dir))
         else :
-            print("WIN\n")
-            return [d for _, d in steps[1:]] + [dir]
+            #print("WIN\n")
+            return [d for _, d in steps[2:]] + [dir]
         #print(f"[{i:2d}] : s = {s}\nV = {V}\nL = {L}\nsteps = {steps}\n")            
     return -1
     util.raiseNotDefined()
