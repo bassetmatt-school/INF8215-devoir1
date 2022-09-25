@@ -116,6 +116,7 @@ def depthFirstSearch(problem:GraphSearch):
             steps.append((s,dir))
         else :
             #print("WIN\n")
+            print(f"steps = {steps}\n")
             return [d for _, d in steps[2:]] + [dir]
         #print(f"[{i:2d}] : s = {s}\nV = {V}\nL = {L}\nsteps = {steps}\n")            
     return -1
@@ -129,8 +130,68 @@ def breadthFirstSearch(problem):
     '''
         INSÉREZ VOTRE SOLUTION À LA QUESTION 2 ICI
     '''
+    from game import Directions
+
+    # s0
+    s = problem.getStartState()
+    start = s
+    prev = (-1,-1)
+    # States visited and fringe
+    V = set()
+    L = util.Queue()
+    # Memory of the steps
+    steps = [(prev,Directions.STOP, prev)]
+    L.push((s, prev, Directions.STOP))
+
+    
+    i = 0
+
+    # object use to create the solution
+    sortie = []
+    actuel = s
+    prev_rechercher = (0,0)
+    
+    while (not L.isEmpty()) :
+        i += 1
+        s, prev, dir = L.pop()
+        if not problem.isGoalState(s) :
+            if s not in V:
+                V.add(s)
+            C = [c for c in problem.getSuccessors(s) if c[0] not in V]
+            
+            # c = ((4,5),'West',1)
+            for c in C :
+                
+                L.push((c[0],s,c[1]))
+                V.add(c[0]) #to keep the first apparation of each node inside the fringe even if their not explore yet
+            
+            
+            steps.append((s,dir,prev))
+        else :
+            #print("WIN\n")
+            
+            
+            prev_rechercher =  prev
+            sortie.insert(0,(s,dir))
+            
+            while(prev_rechercher != (-1,-1) and len(steps)!=0):
+                
+                actuel,dir,prev = steps.pop()
+                
+                if actuel == prev_rechercher :
+                
+                    prev_rechercher =  prev
+                    sortie.insert(0,(actuel,dir))
+                    
+
+            
+            return [d for _, d in sortie[1:]] #+ [dir]
+        # print(f"[{i:2d}] : s = {s}\nV = {V}\nL = {L}\nsteps = {steps}\n")            
+    return -1
 
     util.raiseNotDefined()
+
+    
 
 def uniformCostSearch(problem):
     """Search the node of least total cost first."""
