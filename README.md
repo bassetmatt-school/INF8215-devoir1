@@ -9,9 +9,9 @@ No further requierments are needed
 ## Project advancement
 ### Part 1
 - [x] Question 1: DFS
-- [ ] Question 2: BFS
-- [ ] Question 3: UCS
-- [ ] Question 4: $A^*$
+- [x] Question 2: BFS
+- [x] Question 3: UCS
+- [x] Question 4: $A^*$
 ### Part 2
 - [ ] Question 5:
 - [ ] Question 6:
