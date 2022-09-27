@@ -110,7 +110,7 @@ def depthFirstSearch(problem: GraphSearch):
                 L.push((c[0], s, c[1]))
             V.add(s)
             # Checking the last state in the steps
-            while steps[-1][0] != prev: 
+            while steps[-1][0] != prev:
                 # Depiles states until the previous state is found to add
                 # the new state at the right place
                 steps.pop()
@@ -143,7 +143,7 @@ def breadthFirstSearch(problem: GraphSearch):
             C = [c for c in problem.getSuccessors(s) if c[0] not in V]
             for c in C:
                 L.push((c[0], s, c[1]))
-                # To keep the first apparation of each node inside the fringe 
+                # To keep the first apparation of each node inside the fringe
                 # even if their not explored yet
                 V.add(c[0])
             V.add(s)
@@ -186,7 +186,7 @@ def uniformCostSearch(problem):
             for c in C:
                 newCost = c[2] + cost
                 L.push((c[0], s, c[1], newCost), newCost)
-                # To keep the first apparation of each node inside the fringe 
+                # To keep the first apparation of each node inside the fringe
                 # even if their not explored yet
                 if not problem.isGoalState(c[0]) :
                     V.add(c[0])
@@ -218,50 +218,42 @@ def aStarSearch(problem, heuristic=nullHeuristic):
 
     # s0
     s = problem.getStartState()
-    start = s
     prev = (-1, -1)
-    cout = heuristic(s, problem)
+    cost = heuristic(s, problem)
     # States visited and fringe
     V = set()
     L = util.PriorityQueue()
+    L.push((s, prev, Directions.STOP, cost), cost)
     # Memory of the steps
     steps = [(prev, Directions.STOP, prev)]
-    L.push((s, prev, Directions.STOP, cout), cout)
 
-    i = 0
-
-    # object use to create the solution
-    sortie = []
-    actuel = s
-    prev_rechercher = (0, 0)
-
+    # Main loop
     while (not L.isEmpty()):
-        i += 1
-        s, prev, dir, cout = L.pop()
-        cout = cout - heuristic(s, problem)
+        s, prev, dir, cost = L.pop()
+        cost -= heuristic(s, problem)
         if not problem.isGoalState(s):
-            if s not in V:
-                V.add(s)
-                C = [c for c in problem.getSuccessors(s) if c[0] not in V]
-                # c = ((4,5),'West',1)
-                for c in C:
-                    L.push((c[0], s, c[1], c[2]+cout+heuristic(c[0],
-                           problem)), c[2]+cout+heuristic(c[0], problem))
-                # V.add(c[0]) #to keep the first apparation of each node inside the fringe even if their not explore yet
-                steps.append((s, dir, prev))
+            # c = ((x,y),'West',1)
+            # Filtering not visited states
+            C = [c for c in problem.getSuccessors(s) if c[0] not in V]
+            for c in C:
+                newCost = c[2] + cost + heuristic(c[0], problem)
+                L.push((c[0], s, c[1], newCost), newCost)
+                # To keep the first apparation of each node inside the fringe
+                # even if their not explored yet
+                if not problem.isGoalState(c[0]) :
+                    V.add(c[0])
+            V.add(s)
+            steps.append((s, dir, prev))
         else:
-            # print("WIN\n")
+            prev_step = prev
+            sol = [(s, dir)]
+            while (prev_step != (-1, -1) and len(steps) != 0):
+                current, dir, prev = steps.pop()
+                if current == prev_step:
+                    prev_step = prev
+                    sol.insert(0, (current, dir))
 
-            prev_rechercher = prev
-            sortie.insert(0, (s, dir))
-            while (prev_rechercher != (-1, -1) and len(steps) != 0):
-                actuel, dir, prev = steps.pop()
-                if actuel == prev_rechercher:
-                    prev_rechercher = prev
-                    sortie.insert(0, (actuel, dir))
-
-            return [d for _, d in sortie[1:]]  # + [dir]
-        # print(f"[{i:2d}] : s = {s}\nV = {V}\nL = {L}\nsteps = {steps}\n")
+            return [d for _, d in sol[1:]]
     return -1
 
 
