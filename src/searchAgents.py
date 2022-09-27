@@ -279,7 +279,7 @@ class CornerState :
     Made a class so that the state could be hashable to be put in a dict
     And it is easier to deal with general algorithms
     """
-    position: tuple[int, int]
+    position: tuple[int]
     food: tuple[bool] # Tuple for hash, lists don't work
     
 class CornersProblem(search.SearchProblem):
