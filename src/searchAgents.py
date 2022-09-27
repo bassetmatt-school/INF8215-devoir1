@@ -280,7 +280,7 @@ class CornerState :
     And it is easier to deal with general algorithms
     """
     position: tuple[int, int]
-    food: tuple[bool]
+    food: tuple[bool] # Tuple for hash, lists don't work
     
 class CornersProblem(search.SearchProblem):
     """
@@ -303,7 +303,8 @@ class CornersProblem(search.SearchProblem):
         self._expanded = 0 # DO NOT CHANGE; Number of search nodes expanded
         # Please add any code here which you would like to use
         # in initializing the problem
-        self.gameState = startingGameState
+        # Food in each corner at the beginning
+        self.startFood = [startingGameState.hasFood(*corner) for corner in self.corners]
         self.costFn = lambda x: 1
 
     def getStartState(self):
@@ -311,10 +312,7 @@ class CornersProblem(search.SearchProblem):
         Returns the start state (in your state space, not the full Pacman state
         space)
         """
-        return CornerState(
-            self.startingPosition,
-            tuple(self.gameState.hasFood(*corner) for corner in self.corners)
-        )
+        return CornerState(self.startingPosition, tuple(self.startFood))
 
     def isGoalState(self, state:CornerState):
         """
@@ -336,35 +334,22 @@ class CornersProblem(search.SearchProblem):
 
         successors = []
         for action in [Directions.NORTH, Directions.SOUTH, Directions.EAST, Directions.WEST]:
-            # Add a successor state to the successor list if the action is legal
-            # Here's a code snippet for figuring out whether a new position hits a wall:
-            #   x,y = currentPosition
-            #   dx, dy = Actions.directionToVector(action)
-            #   nextx, nexty = int(x + dx), int(y + dy)
-            #   hitsWall = self.walls[nextx][nexty]
-           
             x,y = state.position
             dx, dy = Actions.directionToVector(action)
             next = int(x + dx), int(y + dy)
             hitsWall = self.walls[next[0]][next[1]]
+            # Only checks positions where pacman can go
             if not hitsWall:
-                # Pacman is on a gum
-                if next in self.corners :
-                    # There is food in the corner i if and only if there was 
-                    # food before and pacman isn't in this corner right now
-                    not_corner = [c != next for c in self.corners]
-                    nextState = CornerState(
-                        next,
-                        tuple(state.food[i] and not_corner[i] for i in range(4))
-                    )
-                # Pacman isn't in a corner
-                else :
-                    nextState = CornerState(
-                        next,
-                        state.food
-                    )
+                if next in self.corners : # Pacman is on food
+                    # There is still food in the corner i if and only if there 
+                    # was food before and pacman isn't in this corner right now
+                    notInCorner = [c != next for c in self.corners]
+                    nextFood = [state.food[i] and notInCorner[i] for i in range(4)]
+                    nextState = CornerState(next, tuple(nextFood))
+                else : # Pacman isn't in a corner
+                    nextState = CornerState(next, state.food)
                 cost = self.costFn(nextState)
-                successors.append( ( nextState, action, cost) )
+                successors.append((nextState, action, cost))
 
         self._expanded += 1 # DO NOT CHANGE
         return successors
