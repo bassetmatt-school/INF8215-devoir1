@@ -37,6 +37,7 @@ description for details.
 Good luck and happy searching!
 """
 
+from dataclasses import dataclass
 from game import Directions
 from game import Agent
 from game import Actions
@@ -269,6 +270,18 @@ def euclideanHeuristic(position, problem, info={}):
 # This portion is incomplete.  Time to write code!  #
 #####################################################
 
+# TODO remove
+import pacman
+from dataclasses import dataclass
+@dataclass(frozen=True)
+class CornerState :
+    """Class that represent a state in the corner problem
+    Made a class so that the state could be hashable to be put in a dict
+    And it is easier to deal with general algorithms
+    """
+    position: tuple[int, int]
+    food: tuple[bool, bool, bool, bool]
+    
 class CornersProblem(search.SearchProblem):
     """
     This search problem finds paths through all four corners of a layout.
@@ -276,7 +289,7 @@ class CornersProblem(search.SearchProblem):
     You must select a suitable state space and successor function
     """
 
-    def __init__(self, startingGameState):
+    def __init__(self, startingGameState:pacman.GameState):
         """
         Stores the walls, pacman's starting position and corners.
         """
@@ -290,36 +303,27 @@ class CornersProblem(search.SearchProblem):
         self._expanded = 0 # DO NOT CHANGE; Number of search nodes expanded
         # Please add any code here which you would like to use
         # in initializing the problem
-  
-        '''
-            INSÉREZ VOTRE SOLUTION À LA QUESTION 5 ICI
-        '''
-
+        self.gameState = startingGameState
+        self.costFn = lambda x: 1
 
     def getStartState(self):
         """
         Returns the start state (in your state space, not the full Pacman state
         space)
         """
+        return CornerState(
+            self.startingPosition,
+            (self.gameState.hasFood(*corner) for corner in self.corners)
+        )
 
-        '''
-            INSÉREZ VOTRE SOLUTION À LA QUESTION 5 ICI
-        '''
-        
-        util.raiseNotDefined()
-
-    def isGoalState(self, state):
+    def isGoalState(self, state:CornerState):
         """
         Returns whether this search state is a goal state of the problem.
         """
+        # any(L) return False if L is full of False, True otherwise
+        return not any(state.food)
 
-        '''
-            INSÉREZ VOTRE SOLUTION À LA QUESTION 5 ICI
-        '''
-
-        util.raiseNotDefined()
-
-    def getSuccessors(self, state):
+    def getSuccessors(self, state:CornerState):
         """
         Returns successor states, the actions they require, and a cost of 1.
 
@@ -339,10 +343,28 @@ class CornersProblem(search.SearchProblem):
             #   nextx, nexty = int(x + dx), int(y + dy)
             #   hitsWall = self.walls[nextx][nexty]
            
-            '''
-                INSÉREZ VOTRE SOLUTION À LA QUESTION 5 ICI
-            '''
-
+            x,y = state.position
+            dx, dy = Actions.directionToVector(action)
+            next = int(x + dx), int(y + dy)
+            hitsWall = self.walls[next[0]][next[1]]
+            if not hitsWall:
+                # Pacman is on a gum
+                if next in self.corners :
+                    # There is food in the corner i if and only if there was 
+                    # food before and pacman isn't in this corner right now
+                    not_corner = [c != next for c in self.corners]
+                    nextState = CornerState(
+                        next,
+                        (state.food[i] and not_corner[i] for i in range(4))
+                    )
+                # Pacman isn't in a corner
+                else :
+                    nextState = CornerState(
+                        next,
+                        state.food
+                    )
+                cost = self.costFn(nextState)
+                successors.append( ( nextState, action, cost) )
 
         self._expanded += 1 # DO NOT CHANGE
         return successors
