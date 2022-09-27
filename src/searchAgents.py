@@ -280,7 +280,7 @@ class CornerState :
     And it is easier to deal with general algorithms
     """
     position: tuple[int, int]
-    food: tuple[bool, bool, bool, bool]
+    food: tuple[bool]
     
 class CornersProblem(search.SearchProblem):
     """
@@ -313,7 +313,7 @@ class CornersProblem(search.SearchProblem):
         """
         return CornerState(
             self.startingPosition,
-            (self.gameState.hasFood(*corner) for corner in self.corners)
+            tuple(self.gameState.hasFood(*corner) for corner in self.corners)
         )
 
     def isGoalState(self, state:CornerState):
@@ -355,7 +355,7 @@ class CornersProblem(search.SearchProblem):
                     not_corner = [c != next for c in self.corners]
                     nextState = CornerState(
                         next,
-                        (state.food[i] and not_corner[i] for i in range(4))
+                        tuple(state.food[i] and not_corner[i] for i in range(4))
                     )
                 # Pacman isn't in a corner
                 else :
