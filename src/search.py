@@ -18,6 +18,8 @@ Pacman agents (in searchAgents.py).
 """
 
 import util
+from game import Directions
+
 
 class SearchProblem:
     """
@@ -67,14 +69,14 @@ def tinyMazeSearch(problem):
     Returns a sequence of moves that solves tinyMaze.  For any other maze, the
     sequence of moves will be incorrect, so only use this for tinyMaze.
     """
-    from game import Directions
     s = Directions.SOUTH
     w = Directions.WEST
-    return  [s, s, w, s, w, w, s, w]
+    return [s, s, w, s, w, w, s, w]
 
 
+# TODO remove
 from searchTestClasses import GraphSearch
-def depthFirstSearch(problem:GraphSearch):
+def depthFirstSearch(problem: GraphSearch):
     """
     Search the deepest nodes in the search tree first.
 
@@ -88,179 +90,126 @@ def depthFirstSearch(problem:GraphSearch):
     print("Is the start a goal?", problem.isGoalState(problem.getStartState()))
     print("Start's successors:", problem.getSuccessors(problem.getStartState()))
     """
-    from game import Directions
     # s0
     s = problem.getStartState()
-    start = s
-    prev = (-1,-1)
+    prev = (-1, -1)
     # States visited and fringe
     V = set()
     L = util.Stack()
-    # Memory of the steps
-    steps = [(prev,Directions.STOP)]
     L.push((s, prev, Directions.STOP))
-    i = 0
-    #print(f"[{i:2d}] : s = {s}\nV = {V}\nL = {L}\n")
-    while (not L.isEmpty()) :
-        i += 1
+    # Memory of the steps
+    steps = [(prev, Directions.STOP, prev)]
+    # Main loop
+    while (not L.isEmpty()):
         s, prev, dir = L.pop()
-        if not problem.isGoalState(s) :
+        if not problem.isGoalState(s):
+            # c = ((x,y),'West',1)
+            # Filtering not visited states
             C = [c for c in problem.getSuccessors(s) if c[0] not in V]
-            # c = ((4,5),'West',1)
-            for c in C :
-                L.push((c[0],s,c[1]))
+            for c in C: # Adding neighbors to fringe
+                L.push((c[0], s, c[1]))
             V.add(s)
-            # Adds the current state to the steps memory at the right place
-            while steps[-1][0] != prev :
+            # Checking the last state in the steps
+            while steps[-1][0] != prev: 
+                # Depiles states until the previous state is found to add
+                # the new state at the right place
                 steps.pop()
-            steps.append((s,dir))
-        else :
-            #print("WIN\n")
-            print(f"steps = {steps}\n")
-            return [d for _, d in steps[2:]] + [dir]
-        #print(f"[{i:2d}] : s = {s}\nV = {V}\nL = {L}\nsteps = {steps}\n")            
+            steps.append((s, dir))
+        else:
+            steps.append((s, dir))
+            return [d for _, d in steps[2:]]
     return -1
-    util.raiseNotDefined()
 
 
-def breadthFirstSearch(problem):
+def breadthFirstSearch(problem: GraphSearch):
     """Search the shallowest nodes in the search tree first."""
-
-
-    '''
-        INSÉREZ VOTRE SOLUTION À LA QUESTION 2 ICI
-    '''
-    from game import Directions
 
     # s0
     s = problem.getStartState()
-    start = s
-    prev = (-1,-1)
+    prev = (-1, -1)
     # States visited and fringe
     V = set()
     L = util.Queue()
-    # Memory of the steps
-    steps = [(prev,Directions.STOP, prev)]
     L.push((s, prev, Directions.STOP))
+    # Memory of the steps
+    steps = [(prev, Directions.STOP, prev)]
 
-    
-    i = 0
-
-    # object use to create the solution
-    sortie = []
-    actuel = s
-    prev_rechercher = (0,0)
-    
-    while (not L.isEmpty()) :
-        i += 1
+    # Main loop
+    while (not L.isEmpty()):
         s, prev, dir = L.pop()
-        if not problem.isGoalState(s) :
-            if s not in V:
-                V.add(s)
+        if not problem.isGoalState(s):
+            # c = ((x,y),'West',1)
+            # Filtering not visited states
             C = [c for c in problem.getSuccessors(s) if c[0] not in V]
-            
-            # c = ((4,5),'West',1)
-            for c in C :
-                
-                L.push((c[0],s,c[1]))
-                V.add(c[0]) #to keep the first apparation of each node inside the fringe even if their not explore yet
-            
-            
-            steps.append((s,dir,prev))
-        else :
-            #print("WIN\n")
-            
-            
-            prev_rechercher =  prev
-            sortie.insert(0,(s,dir))
-            
-            while(prev_rechercher != (-1,-1) and len(steps)!=0):
-                
-                actuel,dir,prev = steps.pop()
-                
-                if actuel == prev_rechercher :
-                
-                    prev_rechercher =  prev
-                    sortie.insert(0,(actuel,dir))
-                    
+            for c in C:
+                L.push((c[0], s, c[1]))
+                # To keep the first apparation of each node inside the fringe 
+                # even if their not explored yet
+                V.add(c[0])
+            V.add(s)
+            steps.append((s, dir, prev))
+        else:
+            prev_step = prev
+            sol = [(s, dir)]
 
-            
-            return [d for _, d in sortie[1:]] #+ [dir]
-        # print(f"[{i:2d}] : s = {s}\nV = {V}\nL = {L}\nsteps = {steps}\n")            
+            while (prev_step != (-1, -1) and len(steps) != 0):
+                current, dir, prev = steps.pop()
+                if current == prev_step:
+                    prev_step = prev
+                    sol.insert(0, (current, dir))
+
+            return [d for _, d in sol[1:]]
     return -1
 
-    util.raiseNotDefined()
-
-    
 
 def uniformCostSearch(problem):
     """Search the node of least total cost first."""
 
-
-    '''
-        INSÉREZ VOTRE SOLUTION À LA QUESTION 3 ICI
-    '''
-    from game import Directions
-
     # s0
     s = problem.getStartState()
     start = s
-    prev = (-1,-1)
+    prev = (-1, -1)
     cout = 0
     # States visited and fringe
     V = set()
     L = util.PriorityQueue()
     # Memory of the steps
-    steps = [(prev,Directions.STOP, prev)]
-    L.push((s, prev, Directions.STOP,cout),cout)
+    steps = [(prev, Directions.STOP, prev)]
+    L.push((s, prev, Directions.STOP, cout), cout)
 
-    
     i = 0
 
     # object use to create the solution
     sortie = []
     actuel = s
-    prev_rechercher = (0,0)
-    
-    while (not L.isEmpty()) :
+    prev_rechercher = (0, 0)
+
+    while (not L.isEmpty()):
         i += 1
         s, prev, dir, cout = L.pop()
-        if not problem.isGoalState(s) :
+        if not problem.isGoalState(s):
             if s not in V:
                 V.add(s)
                 C = [c for c in problem.getSuccessors(s) if c[0] not in V]
-            
             # c = ((4,5),'West',1)
-                for c in C :
-                
-                    L.push((c[0],s,c[1],c[2]+cout),c[2]+cout)
+                for c in C:
+                    L.push((c[0], s, c[1], c[2]+cout), c[2]+cout)
                 # V.add(c[0]) #to keep the first apparation of each node inside the fringe even if their not explore yet
-            
-            
-                steps.append((s,dir,prev))
-        else :
-            #print("WIN\n")
-            
-            
-            prev_rechercher =  prev
-            sortie.insert(0,(s,dir))
-            
-            while(prev_rechercher != (-1,-1) and len(steps)!=0):
-                
-                actuel,dir,prev = steps.pop()
-                
-                if actuel == prev_rechercher :
-                
-                    prev_rechercher =  prev
-                    sortie.insert(0,(actuel,dir))
-                    
+                steps.append((s, dir, prev))
+        else:
+            # print("WIN\n")
+            prev_rechercher = prev
+            sortie.insert(0, (s, dir))
+            while (prev_rechercher != (-1, -1) and len(steps) != 0):
+                actuel, dir, prev = steps.pop()
+                if actuel == prev_rechercher:
+                    prev_rechercher = prev
+                    sortie.insert(0, (actuel, dir))
 
-            
-            return [d for _, d in sortie[1:]] #+ [dir]
-        # print(f"[{i:2d}] : s = {s}\nV = {V}\nL = {L}\nsteps = {steps}\n")            
+            return [d for _, d in sortie[1:]]  # + [dir]
+        # print(f"[{i:2d}] : s = {s}\nV = {V}\nL = {L}\nsteps = {steps}\n")
     return -1
 
-    util.raiseNotDefined()
 
 def nullHeuristic(state, problem=None):
     """
@@ -269,73 +218,57 @@ def nullHeuristic(state, problem=None):
     """
     return 0
 
+
 def aStarSearch(problem, heuristic=nullHeuristic):
     """Search the node that has the lowest combined cost and heuristic first."""
-    '''
-        INSÉREZ VOTRE SOLUTION À LA QUESTION 4 ICI
-    '''
-    from game import Directions
 
     # s0
     s = problem.getStartState()
     start = s
-    prev = (-1,-1)
-    cout = heuristic(s,problem)
+    prev = (-1, -1)
+    cout = heuristic(s, problem)
     # States visited and fringe
     V = set()
     L = util.PriorityQueue()
     # Memory of the steps
-    steps = [(prev,Directions.STOP, prev)]
-    L.push((s, prev, Directions.STOP,cout),cout)
+    steps = [(prev, Directions.STOP, prev)]
+    L.push((s, prev, Directions.STOP, cout), cout)
 
-    
     i = 0
 
     # object use to create the solution
     sortie = []
     actuel = s
-    prev_rechercher = (0,0)
-    
-    while (not L.isEmpty()) :
+    prev_rechercher = (0, 0)
+
+    while (not L.isEmpty()):
         i += 1
         s, prev, dir, cout = L.pop()
-        cout = cout - heuristic(s,problem)
-        if not problem.isGoalState(s) :
+        cout = cout - heuristic(s, problem)
+        if not problem.isGoalState(s):
             if s not in V:
                 V.add(s)
                 C = [c for c in problem.getSuccessors(s) if c[0] not in V]
-            
-            # c = ((4,5),'West',1)
-                for c in C :
-                
-                    L.push((c[0],s,c[1],c[2]+cout+heuristic(c[0],problem)),c[2]+cout+heuristic(c[0],problem))
+                # c = ((4,5),'West',1)
+                for c in C:
+                    L.push((c[0], s, c[1], c[2]+cout+heuristic(c[0],
+                           problem)), c[2]+cout+heuristic(c[0], problem))
                 # V.add(c[0]) #to keep the first apparation of each node inside the fringe even if their not explore yet
-            
-            
-                steps.append((s,dir,prev))
-        else :
-            #print("WIN\n")
-            
-            
-            prev_rechercher =  prev
-            sortie.insert(0,(s,dir))
-            
-            while(prev_rechercher != (-1,-1) and len(steps)!=0):
-                
-                actuel,dir,prev = steps.pop()
-                
-                if actuel == prev_rechercher :
-                
-                    prev_rechercher =  prev
-                    sortie.insert(0,(actuel,dir))
-                    
+                steps.append((s, dir, prev))
+        else:
+            # print("WIN\n")
 
-            
-            return [d for _, d in sortie[1:]] #+ [dir]
-        # print(f"[{i:2d}] : s = {s}\nV = {V}\nL = {L}\nsteps = {steps}\n")            
+            prev_rechercher = prev
+            sortie.insert(0, (s, dir))
+            while (prev_rechercher != (-1, -1) and len(steps) != 0):
+                actuel, dir, prev = steps.pop()
+                if actuel == prev_rechercher:
+                    prev_rechercher = prev
+                    sortie.insert(0, (actuel, dir))
+
+            return [d for _, d in sortie[1:]]  # + [dir]
+        # print(f"[{i:2d}] : s = {s}\nV = {V}\nL = {L}\nsteps = {steps}\n")
     return -1
-
-    util.raiseNotDefined()
 
 
 # Abbreviations
