@@ -11,12 +11,12 @@ No further requierments are needed
 - [x] Question 1: DFS
 - [x] Question 2: BFS
 - [x] Question 3: UCS
-- [ ] Question 4: $A^*$
+- [x] Question 4: $A^*$
 ### Part 2
-- [ ] Question 5:
-- [ ] Question 6:
+- [x] Question 5: Corner Problem
+- [ ] Question 6: Corner Heuristic
 ### Part 3
-- [ ] Question 7:
+- [ ] Question 7: Main problem
 ### Others
 - [ ] Overall documentation and code review
 - [ ] Doc q1
