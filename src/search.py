@@ -1,4 +1,8 @@
 # search.py
+"""
+@Author Matthieu Basset 2225981
+@Author Alberic  Levern 2228455
+""" 
 # ---------
 # Licensing Information:  You are free to use or extend these projects for
 # educational purposes provided that (1) you do not distribute or publish
@@ -16,6 +20,7 @@
 In search.py, you will implement generic search algorithms which are called by
 Pacman agents (in searchAgents.py).
 """
+
 
 import util
 from game import Directions
@@ -74,9 +79,7 @@ def tinyMazeSearch(problem):
     return [s, s, w, s, w, w, s, w]
 
 
-# TODO remove
-from searchTestClasses import GraphSearch
-def depthFirstSearch(problem: GraphSearch):
+def depthFirstSearch(problem):
     """
     Search the deepest nodes in the search tree first.
 
@@ -121,7 +124,7 @@ def depthFirstSearch(problem: GraphSearch):
     return -1
 
 
-def breadthFirstSearch(problem: GraphSearch):
+def breadthFirstSearch(problem):
     """Search the shallowest nodes in the search tree first."""
 
     # s0

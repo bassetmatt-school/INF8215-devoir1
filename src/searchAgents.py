@@ -1,4 +1,8 @@
 # searchAgents.py
+"""
+@Author Matthieu Basset 2225981
+@Author Alberic  Levern 2228455
+""" 
 # ---------------
 # Licensing Information:  You are free to use or extend these projects for
 # educational purposes provided that (1) you do not distribute or publish
@@ -36,6 +40,7 @@ description for details.
 
 Good luck and happy searching!
 """
+
 
 from dataclasses import dataclass
 from game import Directions, Grid
@@ -275,12 +280,10 @@ import pacman
 from dataclasses import dataclass
 @dataclass(frozen=True)
 class CornerState :
-    """Class that represent a state in the corner problem
-    Made a class so that the state could be hashable to be put in a dict
-    And it is easier to deal with general algorithms
+    """Class that represents a state in the corner problem
     """
-    position: tuple[int]
-    food: tuple[bool] # Tuple for hash, lists don't work
+    position: tuple
+    food: tuple 
     
 class CornersProblem(search.SearchProblem):
     """
@@ -367,10 +370,6 @@ class CornersProblem(search.SearchProblem):
             if self.walls[x][y]: return 999999
         return len(actions)
 
-def manhattanDist(x0,y0,x1,y1) :
-    "Manhattan distance"
-    return abs(x1-x0) + abs(y1-y0)
-
 def cornersHeuristic(state:CornerState, problem:CornersProblem):
     """
     A heuristic for the CornersProblem that you defined.
@@ -389,7 +388,7 @@ def cornersHeuristic(state:CornerState, problem:CornersProblem):
     L = []
     for i in range(4):
         if state.food[i] :
-            L.append(manhattanDist(*state.position,*corners[i]))
+            L.append(util.manhattanDistance(state.position,corners[i]))
     return 0 if L == [] else max(L)
 
 class AStarCornersAgent(SearchAgent):
@@ -488,7 +487,8 @@ def foodHeuristic(state, problem: FoodSearchProblem):
     for x in range(foodGrid.width):
         for y in range(foodGrid.height) :
             if foodGrid.data[x][y] :
-                L.append(manhattanDist(*position,x,y))
+                L.append(util.manhattanDistance(position,(x,y)))
     h1 = 0 if L == [] else max(L)
-    return h1
+    h2 = foodGrid.count()
+    return max(h1,h2)
 
