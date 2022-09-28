@@ -38,7 +38,7 @@ Good luck and happy searching!
 """
 
 from dataclasses import dataclass
-from game import Directions
+from game import Directions, Grid
 from game import Agent
 from game import Actions
 import util
@@ -390,7 +390,7 @@ def cornersHeuristic(state:CornerState, problem:CornersProblem):
     for i in range(4):
         if state.food[i] :
             L.append(manhattanDist(*state.position,*corners[i]))
-    return 0 if L == [] else min(L)
+    return 0 if L == [] else max(L)
 
 class AStarCornersAgent(SearchAgent):
     "A SearchAgent for FoodSearchProblem using A* and your foodHeuristic"
@@ -482,12 +482,13 @@ def foodHeuristic(state, problem: FoodSearchProblem):
     Subsequent calls to this heuristic can access
     problem.heuristicInfo['wallCount']
     """
+    foodGrid:Grid
     position, foodGrid = state
-
-    '''
-        INSÉREZ VOTRE SOLUTION À LA QUESTION 7 ICI
-    '''
-
-
-    return 0
+    L = []
+    for x in range(foodGrid.width):
+        for y in range(foodGrid.height) :
+            if foodGrid.data[x][y] :
+                L.append(manhattanDist(*position,x,y))
+    h1 = 0 if L == [] else max(L)
+    return h1
 
