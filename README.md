@@ -14,15 +14,20 @@ No further requierments are needed
 - [x] Question 4: $A^*$
 ### Part 2
 - [x] Question 5: Corner Problem
-- [ ] Question 6: Corner Heuristic
+- [x] Question 6: Corner Heuristic
 ### Part 3
-- [ ] Question 7: Main problem
+- [x] Question 7: Main problem
+Heuristic
+- [x] Less than 15000 states
+- [x] Less than 12000 states
+- [ ] Less than 9000 states
+- [ ] Less than 7000 states
 ### Others
-- [ ] Overall documentation and code review
-- [ ] Doc q1
-- [ ] Doc q2
-- [ ] Doc q3
-- [ ] Doc q4
-- [ ] Doc q5
-- [ ] Doc q6
-- [ ] Doc q7
+- [x] Overall documentation and code review
+- [x] Doc q1
+- [x] Doc q2
+- [x] Doc q3
+- [x] Doc q4
+- [x] Doc q5
+- [x] Doc q6
+- [x] Doc q7
